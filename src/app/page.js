@@ -509,6 +509,8 @@ function AboutSection() {
           >
             <div className="relative">
               <Image
+                width={600}
+                height={800}
                 src="https://images.unsplash.com/photo-1532012197267-da84d127e765?w=600&h=800&fit=crop"
                 alt="Team Working"
                 className="w-full max-w-full h-64 sm:h-80 md:h-96 object-cover rounded-2xl shadow-2xl"
@@ -620,6 +622,8 @@ function TestimonialsSection() {
 
                 <div className="flex items-center">
                   <Image
+                    width={600}
+                    height={800}
                     src={testimonial.image}
                     alt={testimonial.name}
                     className="w-14 h-14 rounded-full object-cover mr-4 border-2 border-purple-200"

@@ -1,13 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Home, Users, FileText, Menu, X } from "lucide-react";
+import { Home, Users, FileText, Menu, X, Book } from "lucide-react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 
 const navItems = [
   { name: "Beranda", href: "/", icon: Home },
   { name: "Profil", href: "/profile", icon: Users },
+  { name: "Katalog", href: "/katalog", icon: Book },
   { name: "Layanan", href: "/layanan", icon: FileText },
 ];
 

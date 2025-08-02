@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { supabase } from "@/lib/supabaseClient";
+import imageCompression from "browser-image-compression";
 import {
   BookOpen,
   Plus,
@@ -185,28 +186,46 @@ export default function ManageBooks() {
     setFilteredBooks(filtered);
   }, [books, searchTerm, selectedCategory, sortBy, sortOrder]);
 
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const file = e.target.files[0];
-    if (file) {
-      // Validate file size (5MB max)
-      if (file.size > 5 * 1024 * 1024) {
-        setError("Ukuran file terlalu besar. Maksimal 5MB.");
+    if (!file) return;
+
+    // Validasi tipe
+    if (!file.type.startsWith("image/")) {
+      setError("File harus berupa gambar.");
+      return;
+    }
+
+    try {
+      // Opsi kompresi: maksimal 1MB, lebar/tinggi maksimal 1024px
+      const options = {
+        maxSizeMB: 1,
+        maxWidthOrHeight: 1024,
+        useWebWorker: true,
+      };
+
+      // Kompres file
+      const compressedFile = await imageCompression(file, options);
+
+      // Jika setelah kompres ukurannya masih > 5MB, tolak
+      if (compressedFile.size > 5 * 1024 * 1024) {
+        setError("Ukuran file terlalu besar setelah kompresi. Maksimal 5 MB.");
         return;
       }
 
-      // Validate file type
-      if (!file.type.startsWith("image/")) {
-        setError("File harus berupa gambar.");
-        return;
-      }
+      // Generate preview URL
+      const compressedUrl = URL.createObjectURL(compressedFile);
 
-      const fileUrl = URL.createObjectURL(file);
+      // Simpan ke state
       setFormData((prev) => ({
         ...prev,
-        cover_file: file,
-        cover_url: fileUrl,
+        cover_file: compressedFile,
+        cover_url: compressedUrl,
       }));
       setError(null);
+    } catch (err) {
+      console.error("Compression error:", err);
+      setError("Gagal memproses gambar. Silakan coba gambar lain.");
     }
   };
 
@@ -1120,7 +1139,7 @@ export default function ManageBooks() {
                           </div>
                         </div>
                         <p className="text-xs text-slate-500 mt-2">
-                          Format yang didukung: JPG, PNG, WebP (Maks 5MB)
+                          Format yang didukung: JPG, PNG, WebP (Maks 2MB)
                         </p>
                       </div>
                       {(formData.cover_url || editingBook?.cover_url) && (

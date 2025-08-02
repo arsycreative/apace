@@ -123,7 +123,7 @@ export default function KatalogPage() {
     }
 
     setFilteredBooks(filtered);
-  }, [searchTerm, selectedCategory, sortBy]);
+  }, [books, searchTerm, selectedCategory, sortBy]);
 
   const BookCard = ({ book, index }) => (
     <motion.div

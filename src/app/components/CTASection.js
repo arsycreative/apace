@@ -1,4 +1,5 @@
 import { ArrowRight, Mail, MapPin, Phone } from "lucide-react";
+import { motion } from "framer-motion";
 
 function CTASection() {
   return (
@@ -22,11 +23,23 @@ function CTASection() {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mb-12 sm:mb-16 px-4">
-          <button className="group w-full sm:w-auto px-8 sm:px-12 py-4 sm:py-6 bg-gradient-to-r from-violet-500 via-purple-500 to-fuchsia-600 text-white rounded-xl lg:rounded-2xl font-bold text-lg sm:text-xl shadow-2xl hover:shadow-purple-500/25 hover:scale-105 transition-all duration-300 flex items-center justify-center space-x-3 relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            <span className="relative z-10">Konsultasi Gratis Sekarang</span>
-            <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 relative z-10 group-hover:translate-x-1 transition-transform duration-300" />
-          </button>
+          <a
+            href="https://wa.me/6281335424229"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full sm:w-auto"
+          >
+            <motion.button
+              className="group w-full sm:w-auto px-8 sm:px-12 py-4 sm:py-6 bg-gradient-to-r from-violet-500 via-purple-500 to-fuchsia-600 text-white rounded-xl lg:rounded-2xl font-bold text-lg sm:text-xl shadow-2xl hover:shadow-purple-500/25 hover:scale-105 transition-all duration-300 flex items-center justify-center space-x-3 relative overflow-hidden"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ type: "spring", damping: 20, stiffness: 300 }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <span className="relative z-10">Konsultasi Gratis Sekarang</span>
+              <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 relative z-10 group-hover:translate-x-1 transition-transform duration-300" />
+            </motion.button>
+          </a>
         </div>
 
         {/* Contact Quick Access */}
@@ -39,7 +52,7 @@ function CTASection() {
               WhatsApp
             </h4>
             <p className="text-slate-300 text-sm sm:text-lg">
-              +62 812-3456-7890
+              +62 813 3542 4229
             </p>
             <p className="text-xs sm:text-sm text-slate-400 mt-1 sm:mt-2">
               Respons dalam 5 menit
@@ -53,11 +66,11 @@ function CTASection() {
             <h4 className="text-white font-bold mb-1 sm:mb-2 text-base sm:text-lg">
               Email
             </h4>
-            <p className="text-slate-300 text-sm sm:text-lg">
-              info@apace.co.id
+            <p className="text-slate-300 text-sm sm:text-lg break-words">
+              adiwangsaparamarthacendikia@gmail.com
             </p>
             <p className="text-xs sm:text-sm text-slate-400 mt-1 sm:mt-2">
-              Respons dalam 1 jam
+              Respons Cepat
             </p>
           </div>
 

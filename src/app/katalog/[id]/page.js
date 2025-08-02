@@ -1,6 +1,7 @@
+// katalog/[id]/page.js
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   Star,
@@ -11,78 +12,13 @@ import {
   Tag,
   Phone,
   PhoneIcon,
+  ArrowLeft,
+  Loader2,
 } from "lucide-react";
-import Link from "next/link";
 import Image from "next/image";
-
-const bookDetail = {
-  id: 1,
-  title: "Manajemen Sumber Daya Manusia Modern",
-  subtitle: "Strategi dan Implementasi dalam Era Digital",
-  authors: [
-    "Dr. Alfiyah Agussalim, S.A.P., M.AP.",
-    "Evi Nilawati, S.I.P., M.M.",
-    "Mahdi Surya Aprilyansyah, S.H., M.H.",
-    "Dr. Juriko Abdussamad, M.Si.",
-  ],
-  cover:
-    "https://images.unsplash.com/photo-1589998059171-988d887df646?w=600&h=800&fit=crop",
-  category: "Manajemen",
-  year: 2024,
-  isbn: "978-623-09-8037-4",
-  pages: "v + 213",
-  price: "85.000",
-  publisher: "PT APACE",
-  publishDate: "Januari 2024",
-  language: "Bahasa Indonesia",
-  format: "Softcover",
-  dimensions: "15.5 x 23 cm",
-  weight: "350 gram",
-  rating: 4.8,
-  totalRatings: 127,
-  views: 1250,
-  downloads: 450,
-  isNew: true,
-  isBestseller: true,
-  description: `Buku ini menghadirkan perspektif terkini tentang manajemen sumber daya manusia dalam konteks transformasi digital yang pesat. Dengan menggabungkan teori-teori klasik dan praktik-praktik inovatif, buku ini memberikan panduan komprehensif bagi para profesional HR, manajer, dan akademisi.
-
-Dalam era disrupsi teknologi, pengelolaan SDM tidak lagi dapat menggunakan pendekatan konvensional. Buku ini membahas bagaimana teknologi mengubah cara kita merekrut, mengembangkan, dan mempertahankan talenta terbaik. Dari penggunaan artificial intelligence dalam seleksi karyawan hingga implementasi sistem manajemen kinerja berbasis data, setiap aspek dibahas dengan detail dan dilengkapi studi kasus nyata.
-
-Para penulis yang merupakan praktisi dan akademisi berpengalaman telah menyusun materi ini berdasarkan riset mendalam dan pengalaman langsung di lapangan. Buku ini tidak hanya menyajikan teori, tetapi juga memberikan tools praktis yang dapat langsung diimplementasikan dalam organisasi.`,
-
-  keyFeatures: [
-    "Teori terkini manajemen SDM digital",
-    "15+ studi kasus perusahaan Indonesia",
-    "Framework praktis implementasi",
-    "Tools dan template siap pakai",
-    "Panduan penggunaan HR Analytics",
-    "Strategi employee engagement modern",
-  ],
-
-  reviews: [
-    {
-      id: 1,
-      name: "Dr. Sarah Wijaya, CHRP",
-      position: "HR Director, PT Maju Bersama",
-      rating: 5,
-      date: "15 Februari 2024",
-    },
-    {
-      id: 2,
-      name: "Prof. Ahmad Fadli, M.M.",
-      position: "Dosen Manajemen, Universitas Indonesia",
-      rating: 5,
-      date: "8 Februari 2024",
-    },
-    {
-      id: 3,
-      name: "Rina Kartika, S.E.",
-      position: "HR Business Partner, Startup Tech",
-      rating: 4,
-      date: "28 Januari 2024",
-    },
-  ],
-};
+import Link from "next/link";
+import { useParams } from "next/navigation";
+import { supabase } from "@/lib/supabaseClient";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
@@ -122,10 +58,114 @@ const staggerContainer = {
 };
 
 export default function DetailKatalogPage() {
+  const params = useParams();
   const [activeTab, setActiveTab] = useState("deskripsi");
+  const [bookDetail, setBookDetail] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchBookDetail = async (bookId) => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const { data, error } = await supabase
+        .from("books")
+        .select("*")
+        .eq("id", bookId)
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      if (!data) {
+        throw new Error("Buku tidak ditemukan");
+      }
+
+      // Update views count
+      await supabase
+        .from("books")
+        .update({ views: (data.views || 0) + 1 })
+        .eq("id", bookId);
+
+      setBookDetail(data);
+    } catch (error) {
+      console.error("Error fetching book detail:", error);
+      setError(error.message || "Gagal memuat detail buku");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (params?.id) {
+      fetchBookDetail(params.id);
+    }
+  }, [params.id]);
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-purple-200 border-t-purple-600 mx-auto mb-4"></div>
+          <p className="text-slate-600 font-medium">Memuat detail buku...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error || !bookDetail) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto px-6">
+          <div className="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <FileText className="w-12 h-12 text-red-500" />
+          </div>
+          <h2 className="text-2xl font-bold text-slate-900 mb-4">
+            Buku Tidak Ditemukan
+          </h2>
+          <p className="text-slate-600 mb-6">
+            {error || "Buku yang Anda cari tidak dapat ditemukan"}
+          </p>
+          <Link
+            href="/katalog"
+            className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-600 to-violet-600 text-white rounded-lg font-semibold hover:shadow-lg transition-all duration-300"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Kembali ke Katalog
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white pt-16 lg:pt-20">
+      {/* Breadcrumb */}
+      <div className="bg-slate-50 py-4">
+        <div className="max-w-7xl mx-auto px-6">
+          <nav className="flex items-center space-x-2 text-sm">
+            <Link href="/" className="text-slate-500 hover:text-purple-600">
+              Beranda
+            </Link>
+            <span className="text-slate-400">/</span>
+            <Link
+              href="/katalog"
+              className="text-slate-500 hover:text-purple-600"
+            >
+              Katalog
+            </Link>
+            <span className="text-slate-400">/</span>
+            <span className="text-slate-900 font-medium truncate">
+              {bookDetail.title}
+            </span>
+          </nav>
+        </div>
+      </div>
+
       {/* Main Content */}
       <section className="py-12">
         <div className="max-w-7xl mx-auto px-6">
@@ -140,7 +180,7 @@ export default function DetailKatalogPage() {
               {/* Main Image */}
               <div className="relative bg-gradient-to-br from-slate-100 to-slate-200 rounded-2xl overflow-hidden shadow-2xl">
                 <Image
-                  src={bookDetail.cover}
+                  src={bookDetail.cover_url || "/placeholder-book.jpg"}
                   alt={bookDetail.title}
                   width={800}
                   height={600}
@@ -150,12 +190,12 @@ export default function DetailKatalogPage() {
 
                 {/* Badges */}
                 <div className="absolute top-6 left-6 flex flex-col gap-2">
-                  {bookDetail.isNew && (
+                  {bookDetail.is_new && (
                     <span className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg">
                       BARU
                     </span>
                   )}
-                  {bookDetail.isBestseller && (
+                  {bookDetail.is_bestseller && (
                     <span className="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg">
                       BESTSELLER
                     </span>
@@ -195,7 +235,7 @@ export default function DetailKatalogPage() {
                       <Star
                         key={i}
                         className={`w-5 h-5 ${
-                          i < Math.floor(bookDetail.rating)
+                          i < Math.floor(bookDetail.rating || 0)
                             ? "text-yellow-400 fill-current"
                             : "text-slate-300"
                         }`}
@@ -203,9 +243,17 @@ export default function DetailKatalogPage() {
                     ))}
                   </div>
                   <span className="text-lg font-semibold text-slate-900">
-                    {bookDetail.rating}
+                    {bookDetail.rating || 0}
                   </span>
+                  {/* <span className="text-sm text-slate-500">
+                    ({bookDetail.total_ratings || 0} ulasan)
+                  </span> */}
                 </div>
+
+                {/* Views */}
+                {/* <div className="mb-6 text-sm text-slate-500">
+                  Dilihat {bookDetail.views || 0} kali
+                </div> */}
 
                 {/* Authors */}
                 <div className="mb-8">
@@ -214,7 +262,7 @@ export default function DetailKatalogPage() {
                     Karya:
                   </h3>
                   <ol className="space-y-2">
-                    {bookDetail.authors.map((author, index) => (
+                    {bookDetail.authors?.map((author, index) => (
                       <li key={index} className="flex items-start">
                         <span className="inline-flex items-center justify-center w-6 h-6 bg-purple-100 text-purple-600 rounded-full text-sm font-medium mr-3 mt-0.5">
                           {index + 1}
@@ -241,12 +289,14 @@ export default function DetailKatalogPage() {
                       {bookDetail.isbn}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center py-2 border-b border-slate-200">
-                    <span className="text-slate-600">Penerbit:</span>
-                    <span className="font-semibold text-slate-900">
-                      {bookDetail.publisher}
-                    </span>
-                  </div>
+                  {bookDetail.publisher && (
+                    <div className="flex justify-between items-center py-2 border-b border-slate-200">
+                      <span className="text-slate-600">Penerbit:</span>
+                      <span className="font-semibold text-slate-900">
+                        {bookDetail.publisher}
+                      </span>
+                    </div>
+                  )}
                   <div className="flex justify-between items-center py-2 border-b border-slate-200">
                     <span className="text-slate-600">Halaman:</span>
                     <span className="font-semibold text-slate-900">
@@ -259,18 +309,38 @@ export default function DetailKatalogPage() {
                       {bookDetail.year}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center py-2 border-b border-slate-200">
-                    <span className="text-slate-600">Format:</span>
-                    <span className="font-semibold text-slate-900">
-                      {bookDetail.format}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center py-2 border-b border-slate-200">
-                    <span className="text-slate-600">Dimensi:</span>
-                    <span className="font-semibold text-slate-900">
-                      {bookDetail.dimensions}
-                    </span>
-                  </div>
+                  {bookDetail.format && (
+                    <div className="flex justify-between items-center py-2 border-b border-slate-200">
+                      <span className="text-slate-600">Format:</span>
+                      <span className="font-semibold text-slate-900">
+                        {bookDetail.format}
+                      </span>
+                    </div>
+                  )}
+                  {bookDetail.dimensions && (
+                    <div className="flex justify-between items-center py-2 border-b border-slate-200">
+                      <span className="text-slate-600">Dimensi:</span>
+                      <span className="font-semibold text-slate-900">
+                        {bookDetail.dimensions}
+                      </span>
+                    </div>
+                  )}
+                  {bookDetail.language && (
+                    <div className="flex justify-between items-center py-2 border-b border-slate-200">
+                      <span className="text-slate-600">Bahasa:</span>
+                      <span className="font-semibold text-slate-900">
+                        {bookDetail.language}
+                      </span>
+                    </div>
+                  )}
+                  {bookDetail.weight && (
+                    <div className="flex justify-between items-center py-2 border-b border-slate-200">
+                      <span className="text-slate-600">Berat:</span>
+                      <span className="font-semibold text-slate-900">
+                        {bookDetail.weight}
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -280,7 +350,11 @@ export default function DetailKatalogPage() {
                   <div>
                     <span className="text-slate-600 text-lg">Harga:</span>
                     <div className="text-3xl font-bold text-purple-600">
-                      Rp {bookDetail.price}
+                      {new Intl.NumberFormat("id-ID", {
+                        style: "currency",
+                        currency: "IDR",
+                        minimumFractionDigits: 0,
+                      }).format(Number(bookDetail.price))}
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
@@ -291,10 +365,17 @@ export default function DetailKatalogPage() {
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <button className="flex-1 bg-gradient-to-r from-purple-600 to-violet-600 text-white py-4 px-6 rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center space-x-2">
-                    <PhoneIcon className="w-5 h-5" />
-                    <span>Pesan Sekarang</span>
-                  </button>
+                  <a
+                    href="https://wa.me/6281335424229"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1"
+                  >
+                    <button className="w-full bg-gradient-to-r from-purple-600 to-violet-600 text-white py-4 px-6 rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center space-x-2">
+                      <PhoneIcon className="w-5 h-5" />
+                      <span>Pesan Sekarang</span>
+                    </button>
+                  </a>
                 </div>
 
                 <div className="mt-4 flex items-center justify-center space-x-6 text-sm text-slate-600">
@@ -352,31 +433,46 @@ export default function DetailKatalogPage() {
                   transition={{ duration: 0.4 }}
                   className="prose prose-lg max-w-none"
                 >
-                  <div className="text-slate-700 leading-relaxed space-y-6">
-                    {bookDetail.description
-                      .split("\n\n")
-                      .map((paragraph, index) => (
-                        <p key={index}>{paragraph}</p>
-                      ))}
-                  </div>
-
-                  <div className="mt-8 bg-purple-50 p-6 rounded-2xl">
-                    <h4 className="text-xl font-semibold text-slate-900 mb-4 flex items-center">
-                      <Award className="w-6 h-6 mr-2 text-purple-600" />
-                      Fitur Unggulan
-                    </h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {bookDetail.keyFeatures.map((feature, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center space-x-3"
-                        >
-                          <div className="w-2 h-2 bg-purple-500 rounded-full flex-shrink-0"></div>
-                          <span className="text-slate-700">{feature}</span>
-                        </div>
-                      ))}
+                  {bookDetail.description && (
+                    <div className="text-slate-700 leading-relaxed space-y-6">
+                      {bookDetail.description
+                        .split("\n\n")
+                        .map((paragraph, index) => (
+                          <p key={index}>{paragraph}</p>
+                        ))}
                     </div>
-                  </div>
+                  )}
+
+                  {bookDetail.key_features &&
+                    bookDetail.key_features.length > 0 && (
+                      <div className="mt-8 bg-purple-50 p-6 rounded-2xl">
+                        <h4 className="text-xl font-semibold text-slate-900 mb-4 flex items-center">
+                          <Award className="w-6 h-6 mr-2 text-purple-600" />
+                          Fitur Unggulan
+                        </h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {bookDetail.key_features.map((feature, index) => (
+                            <div
+                              key={index}
+                              className="flex items-center space-x-3"
+                            >
+                              <div className="w-2 h-2 bg-purple-500 rounded-full flex-shrink-0"></div>
+                              <span className="text-slate-700">{feature}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                  {/* Default content if no description */}
+                  {!bookDetail.description && (
+                    <div className="text-center py-12">
+                      <FileText className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+                      <p className="text-slate-500">
+                        Deskripsi belum tersedia untuk buku ini.
+                      </p>
+                    </div>
+                  )}
                 </motion.div>
               )}
             </div>
@@ -384,38 +480,16 @@ export default function DetailKatalogPage() {
         </div>
       </section>
 
-      {/* Contact CTA */}
-      <section className="py-16 bg-gradient-to-br from-slate-900 to-purple-900">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={staggerContainer}
+      {/* Back to Catalog Button */}
+      <section className="py-8 bg-slate-50">
+        <div className="max-w-7xl mx-auto px-6">
+          <Link
+            href="/katalog"
+            className="inline-flex items-center px-6 py-3 bg-white text-slate-600 rounded-lg font-medium hover:bg-slate-100 transition-colors duration-300 border border-slate-200"
           >
-            <motion.h3
-              variants={fadeInUp}
-              className="text-3xl md:text-4xl font-bold text-white mb-6"
-            >
-              Tertarik dengan Buku Ini?
-            </motion.h3>
-            <motion.p
-              variants={fadeInUp}
-              className="text-xl text-slate-300 mb-8 max-w-3xl mx-auto"
-            >
-              Hubungi kami untuk konsultasi gratis dan dapatkan penawaran
-              terbaik
-            </motion.p>
-            <motion.div
-              variants={fadeInUp}
-              className="flex flex-col sm:flex-row gap-4 justify-center items-center"
-            >
-              <button className="px-8 py-4 bg-gradient-to-r from-violet-500 to-purple-500 text-white rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 flex items-center space-x-2">
-                <Phone className="w-5 h-5" />
-                <span>Hubungi Kami</span>
-              </button>
-            </motion.div>
-          </motion.div>
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Kembali ke Katalog
+          </Link>
         </div>
       </section>
     </div>

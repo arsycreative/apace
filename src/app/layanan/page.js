@@ -160,14 +160,21 @@ export default function LayananPage() {
                   className="flex flex-col sm:flex-row gap-4 pt-4 px-4 lg:px-0"
                   variants={fadeInUp}
                 >
-                  <motion.button
-                    className="group px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-xl font-semibold text-base sm:text-lg shadow-xl flex items-center justify-center space-x-2 w-full sm:w-auto"
-                    whileHover={{ y: -2 }}
-                    transition={{ duration: 0.2 }}
+                  <a
+                    href="https://wa.me/6281335424229"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full sm:w-auto inline-block"
                   >
-                    <span>Konsultasi Gratis</span>
-                    <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform duration-300" />
-                  </motion.button>
+                    <motion.button
+                      className="group px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-xl font-semibold text-base sm:text-lg shadow-xl flex items-center justify-center space-x-2 w-full sm:w-auto relative overflow-hidden"
+                      whileHover={{ y: -2 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <span className="relative z-10">Konsultasi Gratis</span>
+                      <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform duration-300" />
+                    </motion.button>
+                  </a>
                 </motion.div>
 
                 {/* Stats */}
@@ -335,6 +342,8 @@ export default function LayananPage() {
                       <Image
                         src={service.image || "/api/placeholder/400/300"}
                         alt={service.title}
+                        width={400}
+                        height={300}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                       />
                       <div
@@ -1045,8 +1054,8 @@ export default function LayananPage() {
                     : 1,
               }}
             >
-              <span>Konsultasi Proses Publishing</span>
-              <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform duration-300" />
+              <span>Selesai</span>
+              {/* <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform duration-300" /> */}
             </motion.button>
           </motion.div>
         </div>

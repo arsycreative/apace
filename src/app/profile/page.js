@@ -1177,15 +1177,23 @@ export default function ProfilePage() {
               transition={{ duration: 0.8, delay: 0.3 }}
               viewport={{ once: true }}
             >
-              <motion.button
-                className="group px-12 py-6 bg-gradient-to-r from-violet-500 via-purple-500 to-fuchsia-600 text-white rounded-2xl font-bold text-xl shadow-2xl hover:shadow-purple-500/25 transition-all duration-300 flex items-center space-x-3 relative overflow-hidden"
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.98 }}
+              <a
+                href="https://wa.me/6281335424229"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block"
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <span className="relative z-10">Mulai Konsultasi</span>
-                <ArrowRight className="w-6 h-6 relative z-10 group-hover:translate-x-1 transition-transform duration-300" />
-              </motion.button>
+                <motion.button
+                  className="group px-12 py-6 bg-gradient-to-r from-violet-500 via-purple-500 to-fuchsia-600 text-white rounded-2xl font-bold text-xl shadow-2xl hover:shadow-purple-500/25 transition-all duration-300 flex items-center space-x-3 relative overflow-hidden"
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.98 }}
+                  transition={{ type: "spring", damping: 20, stiffness: 300 }}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <span className="relative z-10">Mulai Konsultasi</span>
+                  <ArrowRight className="w-6 h-6 relative z-10 group-hover:translate-x-1 transition-transform duration-300" />
+                </motion.button>
+              </a>
             </motion.div>
 
             {/* Contact Quick Access */}
@@ -1204,7 +1212,7 @@ export default function ProfilePage() {
                   <Phone className="w-8 h-8 text-white" />
                 </div>
                 <h4 className="text-white font-bold mb-2 text-lg">WhatsApp</h4>
-                <p className="text-slate-300 text-lg">+62 812-3456-7890</p>
+                <p className="text-slate-300 text-lg">+62 813 3542 4229</p>
                 <p className="text-sm text-slate-400 mt-2">
                   Respons dalam 5 menit
                 </p>
@@ -1218,10 +1226,10 @@ export default function ProfilePage() {
                   <Mail className="w-8 h-8 text-white" />
                 </div>
                 <h4 className="text-white font-bold mb-2 text-lg">Email</h4>
-                <p className="text-slate-300 text-lg">info@apace.co.id</p>
-                <p className="text-sm text-slate-400 mt-2">
-                  Respons dalam 1 jam
+                <p className="text-slate-300 text-lg">
+                  adiwangsaparamarthacendikia@gmail.com
                 </p>
+                <p className="text-sm text-slate-400 mt-2">Respons cepat</p>
               </motion.div>
 
               <motion.div

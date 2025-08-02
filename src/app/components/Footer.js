@@ -18,6 +18,7 @@ import Image from "next/image";
 const navItems = [
   { name: "Beranda", href: "/", icon: BookOpen },
   { name: "Profil", href: "/profile", icon: BookOpen },
+  { name: "Katalog", href: "/katalog", icon: BookOpen },
   { name: "Layanan", href: "/layanan", icon: BookOpen },
 ];
 
@@ -68,11 +69,13 @@ const Footer = () => {
             <div className="space-y-3">
               <div className="flex items-center space-x-3 text-slate-300">
                 <Mail className="w-5 h-5 text-violet-400" />
-                <span>info@apace.co.id</span>
+                <span suppressHydrationWarning>
+                  adiwangsaparamarthacendikia@gmail.com
+                </span>
               </div>
               <div className="flex items-center space-x-3 text-slate-300">
                 <Phone className="w-5 h-5 text-violet-400" />
-                <span>+62 812-3456-7890</span>
+                <span>+62 813 3542 4229</span>
               </div>
               <div className="flex items-center space-x-3 text-slate-300">
                 <MapPin className="w-5 h-5 text-violet-400" />
@@ -164,7 +167,7 @@ const Footer = () => {
           </p>
 
           {/* Social Links */}
-          <div className="flex items-center space-x-4">
+          {/* <div className="flex items-center space-x-4">
             {socialLinks.map((social, idx) => (
               <motion.a
                 key={idx}
@@ -177,7 +180,7 @@ const Footer = () => {
                 <social.icon className="w-5 h-5 text-slate-400 group-hover:text-white" />
               </motion.a>
             ))}
-          </div>
+          </div> */}
         </div>
       </div>
     </motion.footer>

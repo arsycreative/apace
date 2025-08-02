@@ -117,18 +117,25 @@ export default function HomePage() {
               </motion.p>
 
               <motion.div className="mb-16" variants={childVariant}>
-                <motion.button
-                  className="group px-10 py-5 bg-gradient-to-r from-violet-500 via-purple-500 to-fuchsia-600 text-white rounded-2xl font-bold text-xl shadow-2xl relative overflow-hidden"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  transition={{ type: "spring", damping: 20, stiffness: 300 }}
+                <a
+                  href="https://wa.me/6281335424229"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  <span className="relative z-10 flex items-center justify-center space-x-3">
-                    <span>Konsultasi Eksklusif</span>
-                    <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform duration-300" />
-                  </span>
-                </motion.button>
+                  <motion.button
+                    className="group px-10 py-5 bg-gradient-to-r from-violet-500 via-purple-500 to-fuchsia-600 text-white rounded-2xl font-bold text-xl shadow-2xl relative overflow-hidden"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    transition={{ type: "spring", damping: 20, stiffness: 300 }}
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <span className="relative z-10 flex items-center justify-center space-x-3">
+                      <span>Konsultasi Eksklusif</span>
+                      <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform duration-300" />
+                    </span>
+                  </motion.button>
+                </a>
               </motion.div>
 
               <motion.div
@@ -481,13 +488,14 @@ function AboutSection() {
             </motion.ul>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <motion.button
-                className="px-6 py-3 bg-gradient-to-r from-purple-600 to-violet-500 text-white rounded-lg font-semibold text-base sm:text-lg shadow-lg"
+              <MotionLink
+                href="/profile"
+                className="px-6 py-3 bg-gradient-to-r from-purple-600 to-violet-500 text-white rounded-lg font-semibold text-base sm:text-lg shadow-lg inline-block text-center"
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
               >
                 Pelajari Lebih Lanjut
-              </motion.button>
+              </MotionLink>
 
               <MotionLink
                 href="/layanan"

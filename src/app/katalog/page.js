@@ -1,3 +1,4 @@
+// katalog/page.js
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -5,153 +6,14 @@ import { motion } from "framer-motion";
 import {
   BookOpen,
   Search,
-  Filter,
-  Grid,
-  List,
   ArrowRight,
-  Star,
-  Eye,
-  Heart,
-  Calendar,
   User,
-  Tag,
   TrendingUp,
   Award,
-  Clock,
 } from "lucide-react";
 import Image from "next/image";
-
-// Dummy data untuk buku-buku
-const booksData = [
-  {
-    id: 1,
-    title: "Manajemen Sumber Daya Manusia Modern",
-    author: [
-      "Dr. Alfiyah Agussalim, S.A.P., M.AP.",
-      "Evi Nilawati, S.I.P., M.M.",
-    ],
-    cover:
-      "https://images.unsplash.com/photo-1589998059171-988d887df646?w=400&h=600&fit=crop",
-    category: "Manajemen",
-    year: 2024,
-    isbn: "978-623-09-8037-4",
-    pages: "v + 213",
-    price: "85.000",
-    rating: 4.8,
-    views: 1250,
-    isNew: true,
-    isBestseller: true,
-  },
-
-  {
-    id: 3,
-    title: "Psikologi Pendidikan dan Pembelajaran",
-    author: ["Prof. Dr. Sarah Kusuma, M.Psi.", "Dr. Ahmad Fauzi, M.Ed."],
-    cover:
-      "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=600&fit=crop",
-    category: "Pendidikan",
-    year: 2023,
-    isbn: "978-623-09-7932-8",
-    pages: "vi + 287",
-    price: "78.000",
-    rating: 4.7,
-    views: 1450,
-    isBestseller: true,
-  },
-  {
-    id: 4,
-    title: "Ekonomi Digital dan Transformasi Bisnis",
-    author: ["Dr. Bambang Hermanto, S.E., M.M.", "Linda Sari, S.E., M.Ak."],
-    cover:
-      "https://images.unsplash.com/photo-1554415707-6e8cfc93fe23?w=400&h=600&fit=crop",
-    category: "Ekonomi",
-    year: 2024,
-    isbn: "978-623-09-8112-8",
-    pages: "x + 456",
-    price: "125.000",
-    rating: 4.6,
-    views: 876,
-    isNew: true,
-  },
-  {
-    id: 5,
-    title: "Metodologi Penelitian Kualitatif",
-    author: ["Prof. Dr. Maya Sari, M.A.", "Dr. Rudi Hartono, M.Pd."],
-    cover:
-      "https://images.unsplash.com/photo-1532012197267-da84d127e765?w=400&h=600&fit=crop",
-    category: "Penelitian",
-    year: 2023,
-    isbn: "978-623-09-7854-3",
-    pages: "xii + 389",
-    price: "89.000",
-    rating: 4.8,
-    views: 1123,
-  },
-  {
-    id: 6,
-    title: "Teknologi Informasi dalam Pendidikan",
-    author: ["Dr. Andi Wijaya, S.Kom., M.T.", "Siti Nurhaliza, S.Pd., M.Pd."],
-    cover:
-      "https://images.unsplash.com/photo-1516979187457-637abb4f9353?w=400&h=600&fit=crop",
-    category: "Teknologi",
-    year: 2024,
-    isbn: "978-623-09-8203-3",
-    pages: "viii + 298",
-    price: "92.000",
-    rating: 4.5,
-    views: 743,
-    isNew: true,
-  },
-  {
-    id: 7,
-    title: "Komunikasi Massa di Era Digital",
-    author: [
-      "Dr. Fitri Ramadhani, S.Sos., M.I.Kom.",
-      "Agus Setiawan, S.I.Kom., M.Si.",
-    ],
-    cover:
-      "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&h=600&fit=crop",
-    category: "Komunikasi",
-    year: 2023,
-    isbn: "978-623-09-7756-0",
-    pages: "vi + 234",
-    price: "75.000",
-    rating: 4.4,
-    views: 658,
-  },
-  {
-    id: 8,
-    title: "Akuntansi Manajemen Strategis",
-    author: [
-      "Prof. Dr. Hendra Gunawan, S.E., M.Si., Ak.",
-      "Dewi Kartika, S.E., M.Ak.",
-    ],
-    cover:
-      "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400&h=600&fit=crop",
-    category: "Akuntansi",
-    year: 2024,
-    isbn: "978-623-09-8167-8",
-    pages: "xiv + 478",
-    price: "135.000",
-    rating: 4.9,
-    views: 892,
-    isBestseller: true,
-  },
-  {
-    id: 9,
-    title: "Sosiologi Kontemporer Indonesia",
-    author: ["Dr. Ratna Sari, S.Sos., M.A.", "Prof. Dr. Budi Santoso, M.Si."],
-    cover:
-      "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=400&h=600&fit=crop",
-    category: "Sosiologi",
-    year: 2023,
-    isbn: "978-623-09-7698-3",
-    pages: "x + 356",
-    price: "88.000",
-    rating: 4.6,
-    views: 567,
-  },
-];
+import Link from "next/link";
+import { supabase } from "@/lib/supabaseClient";
 
 const categories = [
   "Semua",
@@ -190,23 +52,57 @@ export default function KatalogPage() {
   const [selectedCategory, setSelectedCategory] = useState("Semua");
   const [sortBy, setSortBy] = useState("newest");
   const [viewMode, setViewMode] = useState("grid");
-  const [filteredBooks, setFilteredBooks] = useState(booksData);
+  const [books, setBooks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [filteredBooks, setFilteredBooks] = useState([]);
+  const [error, setError] = useState(null);
+
+  const fetchBooks = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const { data, error } = await supabase
+        .from("books")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        throw error;
+      }
+
+      console.log("data", data);
+
+      setBooks(data || []);
+    } catch (error) {
+      console.error("Error fetching books:", error);
+      setError("Gagal memuat data buku. Silakan coba lagi.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    let filtered = booksData;
+    fetchBooks();
+  }, []);
 
-    // Filter by search term
+  useEffect(() => {
+    setFilteredBooks(books);
+  }, [books]);
+
+  useEffect(() => {
+    let filtered = books;
+
     if (searchTerm) {
       filtered = filtered.filter(
         (book) =>
           book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          book.author.some((author) =>
+          book.authors.some((author) =>
             author.toLowerCase().includes(searchTerm.toLowerCase())
           )
       );
     }
 
-    // Filter by category
     if (selectedCategory !== "Semua") {
       filtered = filtered.filter((book) => book.category === selectedCategory);
     }
@@ -217,10 +113,10 @@ export default function KatalogPage() {
         filtered.sort((a, b) => b.year - a.year);
         break;
       case "popular":
-        filtered.sort((a, b) => b.views - a.views);
+        filtered.sort((a, b) => (b.views || 0) - (a.views || 0));
         break;
       case "rating":
-        filtered.sort((a, b) => b.rating - a.rating);
+        filtered.sort((a, b) => (b.rating || 0) - (a.rating || 0));
         break;
       default:
         break;
@@ -240,22 +136,21 @@ export default function KatalogPage() {
       <div className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 border border-slate-100 overflow-hidden relative">
         {/* Badges */}
         <div className="absolute top-4 left-4 z-10 flex flex-col gap-2">
-          {book.isNew && (
+          {book.is_new && (
             <span className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
               BARU
             </span>
           )}
-          {book.isBestseller && (
+          {book.is_bestseller && (
             <span className="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
               BESTSELLER
             </span>
           )}
         </div>
 
-        {/* Book Cover */}
         <div className="relative h-80 overflow-hidden">
           <Image
-            src={book.cover}
+            src={book.cover_url || "/placeholder-book.jpg"}
             alt={book.title}
             fill
             className="object-cover group-hover:scale-105 transition-transform duration-700"
@@ -277,23 +172,27 @@ export default function KatalogPage() {
           </h3>
 
           <div className="text-sm text-slate-600 mb-3">
-            <p className="line-clamp-2">{book.author.join(" • ")}</p>
+            <p className="line-clamp-2">{book.authors?.join(" • ")}</p>
           </div>
 
           <div className="flex items-center justify-between">
             <div>
               <span className="text-xs text-slate-500">Harga</span>
               <p className="text-xl font-bold text-purple-600">
-                Rp {book.price}
+                {new Intl.NumberFormat("id-ID", {
+                  style: "currency",
+                  currency: "IDR",
+                  minimumFractionDigits: 0,
+                }).format(Number(book.price))}
               </p>
             </div>
-            <a
+            <Link
               href={`/katalog/${book.id}`}
               className="flex items-center space-x-1 text-purple-600 hover:text-purple-700 font-semibold"
             >
               <span>Lihat</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
-            </a>
+            </Link>
           </div>
         </div>
       </div>
@@ -302,9 +201,7 @@ export default function KatalogPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero Section */}
       <section className="relative min-h-[60vh] overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-gray-900">
-        {/* Background Elements */}
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:100px_100px]"></div>
           <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-violet-600/10 rounded-full blur-3xl"></div>
@@ -364,13 +261,10 @@ export default function KatalogPage() {
         </div>
       </section>
 
-      {/* Main Content */}
       <section className="py-16 bg-gradient-to-br from-slate-50 to-purple-50/30">
         <div className="max-w-7xl mx-auto px-6">
-          {/* Filters and Controls */}
           <div className="mb-12">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
-              {/* Category Filter */}
               <div className="flex flex-wrap gap-2">
                 {categories.map((category) => (
                   <button
@@ -388,24 +282,16 @@ export default function KatalogPage() {
               </div>
             </div>
           </div>
+          {loading && (
+            <div className="p-12 text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-4 border-indigo-200 border-t-indigo-600 mx-auto mb-4"></div>
+              <p className="text-slate-600 font-medium">
+                Memuat buku dari database...
+              </p>
+            </div>
+          )}
 
-          {/* Books Grid */}
-          {filteredBooks.length > 0 ? (
-            <motion.div
-              className={`grid gap-8 ${
-                viewMode === "grid"
-                  ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-                  : "grid-cols-1"
-              }`}
-              variants={staggerContainer}
-              initial="hidden"
-              animate="visible"
-            >
-              {filteredBooks.map((book, index) => (
-                <BookCard key={book.id} book={book} index={index} />
-              ))}
-            </motion.div>
-          ) : (
+          {!loading && filteredBooks.length === 0 && (
             <div className="text-center py-16">
               <BookOpen className="w-24 h-24 text-slate-300 mx-auto mb-6" />
               <h3 className="text-2xl font-bold text-slate-600 mb-4">
@@ -425,10 +311,25 @@ export default function KatalogPage() {
               </button>
             </div>
           )}
+          {!loading && filteredBooks.length > 0 && (
+            <motion.div
+              className={`grid gap-8 ${
+                viewMode === "grid"
+                  ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+                  : "grid-cols-1"
+              }`}
+              variants={staggerContainer}
+              initial="hidden"
+              animate="visible"
+            >
+              {filteredBooks.map((book, index) => (
+                <BookCard key={book.id} book={book} index={index} />
+              ))}
+            </motion.div>
+          )}
         </div>
       </section>
 
-      {/* Statistics Section */}
       <section className="py-16 bg-gradient-to-br from-slate-900 to-purple-900">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">

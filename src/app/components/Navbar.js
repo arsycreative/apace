@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState, useEffect } from "react";
 import { Home, Users, FileText, Menu, X, Book } from "lucide-react";
 import Image from "next/image";
@@ -126,9 +125,7 @@ export default function Navbar() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2, ease: "easeInOut" }}
-            className={`lg:hidden fixed inset-x-0 top-[64px] ${
-              isScrolled ? "bg-white/95 backdrop-blur-md" : "bg-white/20"
-            } shadow-lg overflow-hidden`}
+            className="lg:hidden fixed inset-x-0 top-[64px] z-[1001] bg-white/95 backdrop-blur-md shadow-lg overflow-hidden"
           >
             <div className="max-h-[calc(100vh-80px)] overflow-y-auto px-6 py-4 space-y-2">
               {navItems.map((item) => (
@@ -136,10 +133,8 @@ export default function Navbar() {
                   key={item.name}
                   href={item.href}
                   onClick={() => setIsOpen(false)}
-                  className={`flex items-center space-x-3 py-3 px-4 rounded-lg hover:bg-purple-50 transition-colors duration-200 ${
-                    isScrolled ? "text-slate-900" : "text-white"
-                  }`}
                   whileTap={{ scale: 0.95 }}
+                  className="flex items-center space-x-3 py-3 px-4 rounded-lg hover:bg-purple-50 transition-colors duration-200 text-slate-900"
                 >
                   <item.icon className="w-5 h-5 text-purple-600" />
                   <span className="font-medium">{item.name}</span>

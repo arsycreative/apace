@@ -1226,7 +1226,7 @@ export default function ProfilePage() {
                   <Mail className="w-8 h-8 text-white" />
                 </div>
                 <h4 className="text-white font-bold mb-2 text-lg">Email</h4>
-                <p className="text-slate-300 text-lg">
+                <p className="text-slate-300 text-md sm:text-lg break-words w-full">
                   adiwangsaparamarthacendikia@gmail.com
                 </p>
                 <p className="text-sm text-slate-400 mt-2">Respons cepat</p>

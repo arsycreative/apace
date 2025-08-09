@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Home, Users, FileText, Menu, X, Book } from "lucide-react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
+import { usePathname } from "next/navigation";
 
 const navItems = [
   { name: "Beranda", href: "/", icon: Home },
@@ -12,6 +13,8 @@ const navItems = [
 ];
 
 export default function Navbar() {
+  const pathname = usePathname();
+
   // Flags for SSR-safe rendering & interactivity
   const [mounted, setMounted] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -40,6 +43,12 @@ export default function Navbar() {
       </nav>
     );
   }
+
+  // ambil segmen pertama; akan bernilai "admin" untuk /admin dan /admin/...
+  const firstSegment = pathname?.split("/")[1];
+
+  // jika route berada di bawah /admin => sembunyikan navbar
+  if (firstSegment === "admin") return null;
 
   // 2) Real, interactive navbar on the client after hydration
   return (

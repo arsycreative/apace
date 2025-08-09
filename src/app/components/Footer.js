@@ -13,6 +13,7 @@ import {
   Phone,
 } from "lucide-react";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 // Shared nav items to mirror Navbar
 const navItems = [
@@ -29,6 +30,13 @@ const socialLinks = [
 ];
 
 const Footer = () => {
+  const pathname = usePathname();
+
+  // ambil segmen pertama; akan bernilai "admin" untuk /admin dan /admin/...
+  const firstSegment = pathname?.split("/")[1];
+
+  // jika route berada di bawah /admin => sembunyikan navbar
+  if (firstSegment === "admin") return null;
   return (
     <motion.footer
       className="bg-gradient-to-br from-slate-900 via-purple-950 to-slate-900 text-white"
